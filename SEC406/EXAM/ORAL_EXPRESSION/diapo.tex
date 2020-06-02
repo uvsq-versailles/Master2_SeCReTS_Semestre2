@@ -1,0 +1,377 @@
+\documentclass{beamer}
+  \usepackage[utf8]{inputenc}
+  \usetheme{Warsaw}
+  \graphicspath{images/}
+  \usepackage{amsmath} 
+  \usepackage{amssymb}
+  \title{Can we say the most common way to authenticate is secure ?}
+  \author{UFR des Sciences Versailles - M2 SeCReTS}
+  \institute{CAUMES Clément \& Mehdi MTALSI-MERIMI}
+  \date{2019-2020}
+  \begin{document}
+
+  \begin{frame}
+  \titlepage
+  \end{frame}
+  
+
+\section{Introduction}
+
+	\begin{frame}
+	\begin{itemize}
+		\setbeamertemplate{itemize item}[circle]
+		\item authentication with the use of logins and passwords
+		\item Yahoo which lost informations of his clients 
+	\end{itemize}
+	\begin{center}
+	\includegraphics[scale=0.5]{pics/password.jpeg}
+	\end{center}
+	\begin{center}
+	\includegraphics[scale=0.5]{pics/yahoo.jpeg}
+	\end{center}
+	
+	\end{frame}
+
+ \begin{frame}
+	\begin{block}{Kernel} 
+	Le kernel d'un système d'exploitation est le logiciel permettant : 
+	\begin{itemize}
+		\setbeamertemplate{itemize item}[circle]
+		\item la gestion des systèmes de fichiers
+		\item la communication entre les logiciels et les périphériques connectés à l'appareil
+		\item la gestion et la communication entre les processus
+	\end{itemize}
+	\end{block}
+
+	\begin{block}{Pilote} 
+		Un pilote est un programme qui permet au système d'exploitation d'interagir avec un périphérique.
+	\end{block}
+
+
+\end{frame}
+
+\subsection{/dev}
+ \begin{frame}
+	\begin{block}{Périphérique} 
+		Tout élément dans un OS Linux est représenté par un fichier. De cette manière, les périphériques sont stockés sous forme de fichiers dans le dossier /dev.
+		Ces fichiers vont donc permettre l’accès aux périphériques et sont appelés device nodes. 
+	\end{block}
+\end{frame}
+\begin{frame}
+    \begin{block}{Device Node}
+    	Un device node est un point d’entrée vers le noyau caractérisé par un type (bloc ou char) et deux nombres: le major et le minor. Cela définit de façon unique quel périphérique matériel est accédé via ce fichier. Le majeur permet au noyau de savoir quel driver doit gérer le périphérique et le mineur permet au driver de savoir quel périphérique parmi ceux qu’il gère est utilisé. 
+    \end{block}
+	\begin{exampleblock}{ls -l /dev} 
+		 Permet de voir les différents node devices de la machine.
+	\end{exampleblock}
+\end{frame}
+
+\section{Historique avant udev}
+
+\subsection{makedev}
+\begin{frame}
+\begin{block}{Qu'est ce que makedev?} 
+	Dans les premières versions de Linux, les numéros de major et minor sont codés dans le noyau. De plus, l'espace de valeurs possibles pour les numéros major et minor était trop petit. 
+	Il fallait donc trouver une autre solution pour les versions suivantes de Linux.
+\end{block}
+\end{frame}
+
+\subsection{devfs}
+\begin{frame}
+\begin{block}{Qu'est ce que devfs?} 
+	Devfs est un système de fichiers contenant les device nodes et dont les noeuds sont créés par les pilotes des périphériques lors de leur détection. Cependant, il y avait toujours certaines limites (espace de numéros trop petit notamment).
+\end{block}
+\end{frame}
+
+\section{Définitions de udev et sysfs}
+
+\subsection{udev}
+
+\begin{frame}
+\begin{block}{udev} 
+	udev est un gestionnaire de périphériques du dossier /dev. Il va créer des nœuds dynamiquement pour les périphériques connectés au système. 
+	Udev détecte lorsqu'un nouveau périphérique est connecté. 
+\end{block}
+\end{frame}
+
+\begin{frame}
+\begin{block}{udev}
+	udev est charger de faire le lien entre les informations de sysfs et les règles de l'utilisateur.
+	Pour manipuler et connaitre le traitement du périphérique défini par l'utilisateur, udev se base sur plusieurs propriétés.
+	 
+\end{block}
+\end{frame}
+
+\begin{frame}
+\begin{exampleblock}{Interprétation des propriétés importantes} 
+Les propriétés dépendent du type exact de périphérique mais certaines propriétés sont toujours présentes:
+\begin{itemize}
+	\setbeamertemplate{itemize item}[circle]
+	\item ACTION : Le type d’événement à traiter
+	\item MAJOR, MINOR : Les numéro majeur et mineur du périphérique concerné. 
+    \item SEQNUM : un numéro croissant pour ordonner les événements, 
+    \item SUBSYSTEM : Le sous-système noyau ayant causé l’événement, 
+	\item DEVPATH : Le fichier dans /sys correspondant au périphérique. 
+\end{itemize}
+\end{exampleblock}
+\end{frame}
+
+\begin{frame}
+\begin{exampleblock}{udevadm monitor -k -p} 
+	
+	\tiny{\$  udevadm monitor -k -p
+		
+		monitor will print the received events for:
+		KERNEL - the kernel uevent
+		
+		KERNEL[8414.073713] add      /devices/pci0000:00/0000:00:0b.0/usb1/1-1 (usb)\newline
+		ACTION=add\newline
+		DEVPATH=/devices/pci0000:00/0000:00:0b.0/usb1/1-1\newline
+		SUBSYSTEM=usb\newline
+		DEVNAME=/dev/bus/usb/001/027\newline
+		DEVTYPE=usb\_device\newline
+		PRODUCT=1e3d/2093/100\newline
+		TYPE=0/0/0\newline
+		BUSNUM=001\newline
+		DEVNUM=027\newline
+		SEQNUM=2455\newline
+		MAJOR=189\newline
+		MINOR=26\newline}
+\end{exampleblock}
+ 
+\end{frame}
+
+\begin{frame}
+\begin{exampleblock}{udevadm info -a -p} 
+
+\tiny{\$  udevadm info -a -p /dev/sdb\\
+...\\
+looking at device '/devices/pci0000:00/0000:00:06.0/0000:07:00.1/host4/rport-4:0-5/target4:0:0/4:0:0:5/block/sdd':
+KERNEL==sdb\\    
+    SUBSYSTEM==block\\
+    DRIVER==\\
+
+	
+  ATTR\{range\}==16\\
+ ATTR\{ ext\_range\} ==256\\
+    ATTR\{removable\} ==0\\
+    ATTR\{ro\} ==0\\
+    ATTR\{size\} ==35163230208\\
+    ATTR\{alignment\_offset\} ==0\\
+    ATTR\{discard\_alignment\} ==0\\
+    ATTR\{capability\} ==52\\
+...
+}
+
+		
+		
+\end{exampleblock}
+ 
+\end{frame}
+
+
+
+
+
+
+\subsection{sysfs}
+
+\begin{frame}
+\begin{block}{Fonctions} 
+	\begin{itemize}
+		\setbeamertemplate{itemize item}[circle]
+		\item Sysfs est un système de fichier virtuel, c'est à dire couche d'abstraction au dessus du système de fichier physique
+		\item Il introduit en même temps que udev avec le noyau 2.6 de linux 
+		\item Sysfs exporte depuis l'espace noyau vers l'espace utilisateur les informations 
+		sur les périphériques du système. Ainsi, il va créer un dossier associé au système de fichiers contenant une 
+		suite de fichiers représentant les attributs du périphérique en question. 
+	\end{itemize}
+\end{block}
+
+\begin{exampleblock}{ls /sys/block/sdb} 
+	Permet de visualiser les fichiers représentant les attributs du premier périphérique USB connecté.
+\end{exampleblock}
+\end{frame}
+
+\section{Ecriture de règles}
+
+\subsection{Introduction : Pourquoi écrire des règles ?}
+
+\begin{frame}
+Les règles permettent d'automatiser un certain nombre de taches en fonction des évènements recensées par le noyau.
+
+\begin{block}{Que peut-on faire avec ?} 
+	
+	\begin{itemize}
+		\setbeamertemplate{itemize item}[circle]
+		\item changer de nom un périphérique (durable ou lien symbolique)
+		\item changer les permissions et les propriétés d'un périphérique
+		\item lancer des scripts
+	\end{itemize}
+\end{block}
+
+\begin{block}{Comment les écrire ?} 
+	
+	\begin{itemize}
+		\setbeamertemplate{itemize item}[circle]
+		\item les règles de base se trouvent dans /lib/udev/rules.d/*
+		\item les règles commencent toujours par "[0-9]*-titre.rules"
+		\item écrire dans ce répertoire plutôt /etc/udev/rules.d/*
+	\end{itemize}
+\end{block}
+\end{frame}
+
+\begin{frame}
+\begin{block}{Quelle est la syntaxe globale ?} 
+	
+	\begin{itemize}
+		\setbeamertemplate{itemize item}[circle]
+		\item système de clef/valeur (ex: KERNEL, SUBSYSTEM, DRIVER) 
+		\item commande (ex : SYMLINK, NAME, RUN)
+		\item utilisation des expressions régulières
+		\item utilisation de substitution de caractères
+	\end{itemize}
+\end{block}
+\end{frame}
+
+\subsection{Opérateurs et clés importantes}
+
+\begin{frame}
+\begin{block}{Opérateurs} 
+	
+	\begin{itemize}
+		
+		\setbeamertemplate{itemize item}[circle]
+		\item == : utilisé pour tester l'égalité
+		\item != : utilisé pour tester la différence
+		\item = : utilisé pour assigner une valeur à une clé
+		\item += : utilisé pour ajouter la valeur à une suite de valeurs déjà assigné à la clé
+	\end{itemize}
+\end{block}
+
+\begin{block}{Substitutions de caractères} 
+	
+	\begin{itemize}
+		
+		\setbeamertemplate{itemize item}[circle]
+		\item \%n : représente le numéro kernel ex : sdb1 donne 1
+		\item \%k : nom kernel ex : sdb1 
+		\item \%c : permet de récupérer la sortie de PROGRAM
+	\end{itemize}
+\end{block}
+
+\end{frame}
+\begin{frame}
+\begin{block}{Clés principales \url{https://linux.die.net/man/8/udev}} 
+	
+	\begin{itemize}
+		
+		\setbeamertemplate{itemize item}[circle]
+		\footnotesize{
+		\item ACTION : représente l'action du périphérique (connexion avec add et déconnexion avec remove) ex : ACTION=="add"
+		\item DEVPATH : représente le chemin absolu d'accès au périphérique
+		\item KERNEL : représente le nom du périphérique ex : KERNEL=="sd[b-z][0-9]"
+		\item NAME : représente le nom du noeud du périphérique
+		\item SYMLINK : représente le lien symbolique du noeud (il peut y avoir plusieurs lien symbolique par noeud)
+		\item SUBSYSTEM : représente ke sous-système du périphérique ex : SUBSYSTEM=="usb"
+		\item DRIVER : représente le nom du pilote du périphérique
+		\item ATTR\{filename\} : représente l'attribut filename trouvé par sysfs lors de la connexion du périphérique.
+		\item RUN : permet d'exécuter un script ou une commande
+		\item ...
+		
+	}
+	\end{itemize}
+\end{block}
+\end{frame}
+
+\subsection{Tester ses règles}
+\begin{frame}
+\begin{exampleblock}{udevadm test} 
+		
+		Pour visualiser quels scripts ont été lancés à la connexion d'un périphérique, il est possible d'utiliser la commande suivante : 
+		udevadm test -a add [fichier sysfs] \newline ex : udevadm test /sys/block/sdb
+\end{exampleblock}
+\end{frame}
+
+\subsection{Exemple concret}
+\begin{frame}
+\begin{exampleblock}{Exemples} 
+	
+	\begin{itemize}
+		
+		\setbeamertemplate{itemize item}[circle]
+		\item KERNEL=="sdb[0-9]", ACTION=="add", RUN+="/usr/bin/program.sh" : va détecter la connexion d'un disque dur externe et va lancer le script program.sh
+		\item KERNEL=="mice", ACTION=="add", NAME="souris" : va détecter la souris à sa connexion et va créer un unique node dans dev/souris
+		\item KERNEL=="hdc", ACTION=="add", SYMLINK+="dev/cdrom" : va détecter le CD-ROM et va créer un lien symbolique dev/cdrom et qui pointera vers dev/hdc
+			
+	\end{itemize}
+\end{exampleblock}
+\end{frame}
+
+\section{Administration}
+
+\subsection{Log définition}
+
+\begin{frame}
+\begin{block}{Définition} 
+	Un log (ou logging) est un fichier permettant de stocker un historique des événements sur une machine. C'est donc un journal de bord qui est utilisé dans l'administration système pour garder une trace de ce qui s'est passé (pas forcément des incidents).
+\end{block}
+
+
+\begin{alertblock}{Informations utiles pour les logs}
+	\begin{itemize}
+		\setbeamertemplate{itemize item}[circle]
+		\item Date et heure de l'action
+		\item Identification de l'action 
+		\item Auteur de l'action (dans l'idéal)
+		\item Identification de l'outil permettant d'effectuer l'action
+	\end{itemize}
+\end{alertblock}
+\end{frame}
+
+\subsection{udev et les logs}
+\begin{frame}
+\begin{block}{Utilité de udev et de sysfs pour l'administration} 
+	udev permet de lancer des scripts lors de la connexion et déconnexion de périphériques sur la machine. \newline On peut donc écrire dans un fichier (de log) afin d'identifier l'action (connexion ou déconnexion) et le périphérique. 
+\end{block}
+
+
+\begin{exampleblock}{Extrait du résultat généré par une règle udev pour l'administration}
+	\tiny{
+		Fri Nov 15 11:23:02 CET 2019 - CAUMES Generic\_Flash\_Disk\_CCCB1104231104350952973414-0:0 sdb1 : connexion \newline
+		Fri Nov 15 11:23:04 CET 2019 - HEQUET Verbatim\_STORE\_N\_GO\_070126D061196C46-0:0 sdc1 : connexion \newline
+		Fri Nov 15 11:23:09 CET 2019 - CAUMES Generic\_Flash\_Disk\_CCCB1104231104350952973414-0:0 sdb1 : deconnexion \newline
+		Fri Nov 15 11:23:11 CET 2019 - HEQUET Verbatim\_STORE\_N\_GO\_070126D061196C46-0:0 sdc1 : deconnexion \newline
+	}
+\end{exampleblock}
+\end{frame}
+
+\subsection{Exemple concret}
+\begin{frame}
+\begin{exampleblock}{Idées de règles udev pour l'administration}
+	\begin{itemize}
+		\setbeamertemplate{itemize item}[circle]
+		\item Exercice de création de logs qui va détecter les différentes connexions et déconnexions de clés USB, ainsi que le montage/démontage
+		de nouvelles partitions sur le disque dur (exercice 2).
+	    \item Exercice qui va créer un nouveau point de montage d'une clé USB et la démonter à sa déconnexion (exercice 3).
+		\item Exercice qui va réaliser un backup sur une clé particulière (en fonction du numéro de série) (exercice 4).
+		\item Exemple d'exercice d'administration qui va faire une analyse anti-virus automatique du contenu de la clé USB qui vient d'être connectée.
+		
+	\end{itemize}
+\end{exampleblock}
+\end{frame}
+
+\section{Références}
+
+ \begin{frame}
+\begin{block}{Références} 
+	\begin{itemize}
+		\setbeamertemplate{itemize item}[circle]
+		\item \footnotesize \url{doc.ubuntu-fr.org/udev} \normalsize
+		\item \footnotesize \url{linuxconfig.org/tutorial-on-how-to-write-basic-udev-rules-in-linux} \normalsize
+		\item \footnotesize \url{www.linuxembedded.fr/2015/05/une-introduction-a-udev/} \normalsize
+	\end{itemize}
+\end{block}
+\end{frame}
+      
+\end{document}
