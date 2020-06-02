@@ -1,0 +1,142 @@
+I) Collecte de logs 
+
+- sur la machine metasploitable : 
+> dans /etc/syslog.conf, rediriger les logs de metasploitable vers vm-collecte : 
+*.*	@192.168.1.254
+
+> redémarrer le service : 
+# sudo /etc/init.d/sysklogd restart
+
+- sur la machine vm-collecte :
+> créer le fichier /etc/systemd/system/rsyslog-collecteur.service
+[Unit]
+Description=Service de collecte de logs
+[Service]
+Type=notify
+ExecStart=/usr/sbin/rsyslogd -n -f /etc/rsyslog-collecteur.conf \
+-i /var/run/rsyslog-collecteur.pid
+Restart=on-failure
+[Install]
+WantedBy=multi-user.target
+
+> créer le fichier /etc/rsyslog-collecteur.conf
+module(load="imudp")
+module(load="imtcp")
+input(type="imudp" port="514" ruleset="logremotehost")
+input(type="imtcp" port="514" ruleset="logremotehost")
+template(name="remotehostfile" type="string" string="/logs/%HOSTNAME%/messages")
+
+ruleset(name="logremotehost"){
+action(type="omfile" dynafile="remotehostfile" template="RSYSLOG_TraditionalFileFormat")
+}
+
+> redémarrer le service : 
+sudo systemctl restart rsyslogd-collecte
+
+II) Surveillance réseau
+
+a) ARPWATCH
+
+> sur la machine collecte, pour surveiller les requetes ARP sur les interfaces enp0s3 et enp0s8, sudo nano /etc/arpwatch.conf et ajout : 
+enp0s8 -m root
+enp0s3 -m root
+
+> redémarrer le service : 
+$ sudo /etc/init.d/arpwatch restart 
+
+> les logs seront par défaut dans /var/log/syslog, sous le nom de arpwatch
+
+b) Suricata
+
+permet de détecter des signatures d'événèments 
+
+> modifier les regles dans /etc/suricata/rules/local.rules et ajouter : 
+$ alert icmp any any -> $HOME_NET any (msg:"ICMP test"; sid:1000001;rev:1; classtype:icmpevent;)
+Cette règle va ajouter un log si il y a un paquet ICMP de nimporte quelle adresse vers l'adresse $HOME_NET
+$ alert tcp any any -> $HOME_NET any (msg:"TCP Port Scanning"; detection_filter:track by_src, count 10, seconds 10; sid:1000003; rev:2;)
+Cette règle va détecter les nmap
+$ alert tcp-pkt any any -> any 80 (msg:"HTTP dl"; content:"Get /download.php"; sid:1; rev:1;)
+Cette règle va détecter les téléchargements du fichier download.php
+
+> modifier le fichier /etc/suricata/suricat-debian.yaml
+et ajouter la règle 
+HOME_NET: "[192.168.1.0/24]"
+
+c) Argus 
+
+permet d'enregistrer uniquement les ip/ports sources et destination (sur VM Collecte)
+
+> modifier le fichier /etc/argus.conf
+ARGUS_INTERFACE=enp0s8
+
+> redémarrer le service : 
+$ sudo systemctl restart argus
+
+> voir les logs :
+$ ra -nr /var/log/argus/argus.log
+$ ra -nr /var/log/argus/argus.log - port 80 
+
+ex : 
+02-24-20 14:32	icmp	192.168.1.2 <-> 192.168.1.1 
+
+d) auditd
+
+-a action,filter -S system_call -F field=value -k key_name
+filter – has two possible values: always or never.
+action – specifies kernel rule-matching filter (task, exit, user and exclude) is applied to the event.
+system call – system call name.
+field – specifies additional options such as architecture, PID, GID etc to modify rule.
+
+ex : 
+-a exit,always -F arch=b32 -S execve -k procmon
+
+> reboot
+
+https://www.tecmint.com/linux-system-auditing-with-auditd-tool-on-centos-rhel/
+https://connect.ed-diamond.com/GNU-Linux-Magazine/GLMFHS-093/Journalisez-les-actions-de-vos-utilisateurs-avec-Auditd
+
+log : 
+/var/log/auditd.log
+
+
+III) Analyse de logs
+
+1) COLLECTE : rsyslog (linux) et nxlog (windows) permettent de collecter les logs locaux d'un système. 
+   Il est possible de paramétrer ce module pour formatter les logs au format JSON et de les envoyer dans une instance de logstash.
+
+2) EXTRACTION : logstash (linux) qui va recevoir les logs de rsyslog/nxlog (input), parser les logs selon certains critères et les filtrer (filter)
+   et les insérer dans Elasticsearch (output).
+
+3) INDEXATION : elasticsearch va ensuite les indexer correctement pour pouvoir requêter par la suite.
+
+4) ANALYSE : kibana et l'API Python Elasticsearch permettent de visualiser les logs indexés. 
+
+
+> configuration logstash.conf
+
+input {
+  udp {
+    port => 10514
+    codec => "json"
+    type => "syslog"
+  }
+  tcp {
+    port => 514
+    codec => "json"
+  }
+}
+
+filter {
+  if [type == "syslog"]
+  grok {
+    match => {"message" => "Accepted password for %{DATA:user} from %{IP:ip} port %{INT:port} ssh2"}
+    match => {"message" => "%{TIME:logtime} %{DATA:name} sudo [{%INT}]: pam_unix{sudo:session}: session %{DATA:status} for user %{DATA:user}"}
+  }
+}
+
+output {
+  elasticsearch { hosts => localhost }
+}
+
+
+

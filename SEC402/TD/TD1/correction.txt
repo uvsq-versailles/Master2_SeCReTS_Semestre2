@@ -1,0 +1,24 @@
+- Scan de machines : 
+lister les machines dispo sur le réseau et retourne leur IP et leur adresse MAC avec leur nom d'hôte
+> nmap -sP 10.0.0.0/24
+
+- Scan des ports TCP : 
+permet de détecter les ports TCP ouverts en envoyant des SYN avec les services associés
+> nmap -sS 10.0.0.254
+
+> nmap -sU 10.0.0.254
+scan UDP
+
+- Scan des versions des OS : 
+> nmap -sS -A 10.0.0.254
+
+> nmap -sV -A 192.168.1.29
+
+- Démarrage de metasploit
+démarrer bdd metasploit
+> msfdb init
+
+démarrer metasploit
+> msfconsole
+
+

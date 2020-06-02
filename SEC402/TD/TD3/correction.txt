@@ -1,0 +1,35 @@
+
+> sudo systemctl start rsyslog
+
+> /opt/logstash/bin/logstash −f logstash.conf
+
+> sudo systemctl start elasticsearch
+
+> sudo systemctl start kibana
+
+filter {
+  if [type] == "syslog" {
+    grok {
+      match => { "message" => "%{SYSLOGTIMESTAMP:syslog_timestamp} %{SYSLOGHOST:syslog_hostname} %{DATA:syslog_program}(?:\[%{POSINT:syslog_pid}\])?: %{GREEDYDATA:syslog_message}" }
+      add_field => [ "received_at", "%{@timestamp}" ]
+      add_field => [ "received_from", "%{host}" ]
+    }
+    date {
+      match => [ "syslog_timestamp", "MMM  d HH:mm:ss", "MMM dd HH:mm:ss" ]
+    }
+  }
+}
+
+input {
+  tcp {
+    port => 10514
+    codec => "line"
+  }
+}
+
+> cat fichier.log | nc localhost 10514
+
+----
+
+> sekurlsa::minidump lsass.dmp
+> sekurlsa::logonPasswords

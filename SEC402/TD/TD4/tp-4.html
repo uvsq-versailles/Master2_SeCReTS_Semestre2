@@ -1,0 +1,83 @@
+
+  TP Audit et détection d'intrusion 4
+
+
+    A finir
+
+ 1. Manipulation nmap et metasploit sur Kali
+ 2. Mise en place suricata avec règles de détection scan et exploit vsftpd
+ 3. Manipulation argus et bro
+ 4. Si vous disposez d'une installation de Kali (donc pas le mode live),
+    effectuez l'installation de OpenVAS et scannez la machine
+    Metasploitable.
+
+
+    Supplément
+
+ 1. Configuration auditd sur Metasploitable : enregistrer les commandes
+    exécutées
+
+  * Modifier le sources.list : |sudo sed -i 's/us.archive/old-releases/' /etc/apt/sources.list|
+  * |sudo apt-get install auditd audispd-plugins|
+  * Compléter /etc/audit/audit.rules en suivant cet article
+    <https://secopsmonkey.com/monitoring-process-execution-with-auditd.html>
+  *
+
+    Configurer l'envoi des logs auditd vers syslog en modifiant la ligne
+    suivante dans /etc/audisp/plugins.d/syslog.conf :
+
+    |active = yes|
+
+  *
+
+    Vous pouvez lire cet article
+    <https://connect.ed-diamond.com/GNU-Linux-Magazine/GLMFHS-093/Journalisez-les-actions-de-vos-utilisateurs-avec-Auditd>
+    pour plus d'informations sur la surveillance avec auditd.
+
+ 2. Exploiter au moins 3 services vulnérables (vsftpd, tomcat, twiki,
+    unrealircd, proftpd,...)
+
+
+     Bonus si laptop assez puissant:
+
+ 1. Relier vmanalyse à reseau_interne
+ 2. Configurer rsyslog-collecteur sur vmcollecte:
+
+  *
+
+    Forward vers logstash sur un port de votre choix :
+
+    |ruleset(name="logremotehost"){
+    action(type="omfile" dynafile="remotehostfile" template="RSYSLOG_TraditionalFileFormat")
+    action(type="omfwd" protocol="tcp" target="192.168.1.72" port="5000")
+    }|
+
+  *
+
+    Ajout d'un traitement spécifique pour les logs auditd dans logstash :
+
+    |  if [syslog_program] =~ "audispd" {
+    kv { }
+    grok {
+      match => { "msg" => "audit\(%{NUMBER:audit_epoch}:%{NUMBER:audit_counter}\):" }
+    }
+    mutate {
+      rename => {
+        "type" => "audit_type"
+        "auid" => "uid_audit"
+        "fsuid" => "uid_fs"
+        "suid" => "uid_set"
+        "ses" => "session_id"
+      }
+    }
+      }|
+
+  *
+
+    Enfin, créer des visualisations concernant les logs auditd, ou des
+    scripts pour afficher les commandes exécutées.
+
+[procmon]:
+[https://secopsmonkey.com/monitoring-process-execution-with-auditd.html][auditd]:
+[https://connect.ed-diamond.com/GNU-Linux-Magazine/GLMFHS-093/Journalisez-les-actions-de-vos-utilisateurs-avec-Auditd]
+

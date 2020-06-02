@@ -1,0 +1,27 @@
+tcpdump ressortir le trafic ARP:
+> tcpdump -n -i enp0s8 arp
+
+lancer service arpwatch : 
+> sudo nano /etc/arpwatch.conf
+> ajouter : 
+enp0s8 -a -n 192.168.1.0/24
+enp0s3 -a -n 10.0.0.0/24
+> sudo /etc/init.d/arpwatch restart 
+
+kali envoie des requetes ARP spoofés : 
+> arpspoof -i eth0 -t @routeur @victim 
+
+> urlsnarf -p capture.pcap
+permet de visualiser les URL des requetes HTTP 
+
+Suricata
+
+> /etc/suricata/rules/local.rules
+alert icmp any any -> $HOME_NET any (msg:”ICMP test”; sid:1000001;rev:1; classtype:icmpevent;)
+
+alerte sur les logs /var/log/suricata/
+
+> systemctl restart suricata
+
+sur la kali 
+> ping 192.168.1.29

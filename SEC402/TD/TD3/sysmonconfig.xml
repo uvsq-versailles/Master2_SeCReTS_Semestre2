@@ -1,0 +1,9 @@
+<Sysmon schemaversion="4.22">
+    <EventFiltering>
+        <RuleGroup name="" groupRelation="or">
+            <ProcessAccess onmatch="include">
+                <TargetImage condition="is">CHEMIN_DU_PROCESS</TargetImage>
+            </ProcessAccess>
+        </RuleGroup>
+    </EventFiltering>
+</Sysmon>
