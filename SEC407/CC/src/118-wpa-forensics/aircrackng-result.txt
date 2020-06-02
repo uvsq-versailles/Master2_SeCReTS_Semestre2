@@ -1,0 +1,20 @@
+# aircrack-ng -w wordlist.txt psk-01.cap
+
+                              Aircrack-ng 1.5.2 
+
+      [00:14:03] 2489611/3584485 keys tested (1383.64 k/s) 
+
+      Time left: 13 minutes, 11 seconds                         69.46%
+
+                         KEY FOUND! [ PROTECTION78 ]
+
+
+      Master Key     : 79 02 E3 63 1A 48 21 AF 7F 88 FE 4A C4 63 CF 67 
+                       6D 9D EE 35 CD DA 06 39 F5 C9 D0 2D 9B AE 57 33 
+
+      Transient Key  : ED 03 EF 3B 1C 59 40 43 21 D3 A6 00 0F 2A 66 6A 
+                       30 55 38 E8 96 51 66 49 48 77 33 4D AA 75 58 E7 
+                       7F 49 F1 AA 59 97 CE B4 DC 4D 0D 7C CA AF D0 34 
+                       CF 67 EA 66 C7 98 21 54 16 77 69 B0 95 73 59 F1 
+
+      EAPOL HMAC     : 86 3E 06 47 03 9F 8D CF AD D6 80 38 18 35 4B CC

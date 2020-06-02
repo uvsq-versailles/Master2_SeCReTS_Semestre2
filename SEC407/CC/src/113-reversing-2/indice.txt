@@ -1,0 +1,12 @@
+./testflag password
+
+The right password is the flag.
+
+NB: the last lines of the source code are:
+[...]
+    if (argc==2 && !strcmp(argv[1],a)) {
+	printf("Welcome!\n");
+    } else {
+	printf("Nope, try again!\n");
+    }
+}

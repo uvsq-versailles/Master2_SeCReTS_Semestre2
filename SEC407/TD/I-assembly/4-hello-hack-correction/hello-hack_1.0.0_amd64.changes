@@ -1,0 +1,31 @@
+Format: 1.8
+Date: Wed, 26 Feb 2020 11:00:00 +0100
+Source: hello-hack
+Binary: hello-hack
+Architecture: source amd64
+Version: 1.0.0
+Distribution: any
+Urgency: medium
+Maintainer: toto <toto@toto.net>
+Changed-By: TOTO <toto@toto.net>
+Description:
+ hello-hack - no description available
+Changes:
+ hello-hack (1.0.0) any; urgency=medium
+ .
+   * sudo hello world
+Checksums-Sha1:
+ a4ded8b53df8edbf77befa6161d5e3c4f56561a8 495 hello-hack_1.0.0.dsc
+ f4d54bef307c59f6d5a7c5ab657c12fb1dd825a6 1546877 hello-hack_1.0.0.tar.gz
+ 6d411f5071d435aa59b137cae348b3328921b105 5201 hello-hack_1.0.0_amd64.buildinfo
+ 9cd33e0bb3c2f7a9d2b940d0de8732e9ebb09163 620140 hello-hack_1.0.0_amd64.deb
+Checksums-Sha256:
+ e71b2ab51dbec1bf33a072f878d198a7e72011923ef16185d4ab1508f587929f 495 hello-hack_1.0.0.dsc
+ de3c8d2f9ade77689eb09bd0560616f6e072396daf29d65cf3b13321cc3e6856 1546877 hello-hack_1.0.0.tar.gz
+ 35b0ccf8b84589c067c05d6cdd8eec91ab908adeb6ab237f5bf0fc388485e8ab 5201 hello-hack_1.0.0_amd64.buildinfo
+ eff0f96075a3cdaffe18f1f1dedb3a7cd25c2632726e8b186e6094d7260c0ba7 620140 hello-hack_1.0.0_amd64.deb
+Files:
+ 854f0a5e5a59f37af5d792c0f6374b04 495 devel optional hello-hack_1.0.0.dsc
+ ecc555a78fa0b0b4cc5e00f0caf784ee 1546877 devel optional hello-hack_1.0.0.tar.gz
+ 71107a8f66422a66072a64dd47cb7fec 5201 devel optional hello-hack_1.0.0_amd64.buildinfo
+ c6d36fc5368cca75994bd3cb10dee0a1 620140 devel optional hello-hack_1.0.0_amd64.deb

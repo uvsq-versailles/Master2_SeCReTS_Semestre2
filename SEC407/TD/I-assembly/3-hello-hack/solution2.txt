@@ -1,0 +1,25 @@
+
+
+
+$ dpkg-buildpackage --no-sign
+$ sudo dpkg -i hello-hack_1.0.0_amd64.deb
+$ ldd ./hello-hack/hello-hack 
+	linux-vdso.so.1 (0x00007fff53ba5000)
+	libc.so.6 => /lib/x86_64-linux-gnu/libc.so.6 (0x00007f7613e9d000)
+	/lib64/ld-linux-x86-64.so.2 (0x00007f7614081000)
+$ cd shellcode/
+$ cp /lib/x86_64-linux-gnu/libc.so.6 libc.so.6
+$ ldd ./hello-hack/hello-hack
+	linux-vdso.so.1 (0x00007ffcc6b19000)
+	libc.so.6 => ./libc.so.6 (0x00007f46d396a000)
+	/lib64/ld-linux-x86-64.so.2 (0x00007f46d3b31000)
+$ nm -D /lib/x86_64-linux-gnu/libc.so.6 | grep "puts"
+	0000000000072af0 W fputs
+	000000000007cd00 W fputs_unlocked
+	0000000000072af0 T _IO_fputs
+	0000000000074040 T _IO_puts
+	0000000000074040 W puts
+	0000000000100910 T putsgent
+	00000000000fee10 T putspent
+
+

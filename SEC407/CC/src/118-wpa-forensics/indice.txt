@@ -1,0 +1,22 @@
+THE STORY
+========
+
+In the ennemy base, there is a building, which is guarded by hundreds of 
+highly trained soldiers.
+
+In this building, there is a WPA-PSK protected wifi with an unbreakable
+password, like a 10 letter english word (all uppercase) followed by 2
+digits.
+
+In this wifi network, there is a web server that only the flag keeper
+(=admin)  may access.
+
+The flag is his password
+
+Good luck!
+
+PS: By the way, a geek visitor just told me he was walking around 
+the base with his linux laptop (of course, his wlan interface was 
+in  monitor-mode by default). Anyways, he gave me this capture:
+psk-01.cap 
+

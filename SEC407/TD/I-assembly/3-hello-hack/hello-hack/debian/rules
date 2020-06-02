@@ -1,0 +1,14 @@
+#!/usr/bin/make -f
+
+clean:
+
+
+build:
+	gcc hello-hack.c -o hello-hack -Wl,-rpath,.
+
+binary:
+	mkdir -p debian/hello-hack/sbin
+	cp hello-hack debian/hello-hack/sbin/
+	chmod 4755 debian/hello-hack/sbin/hello-hack
+	dh_gencontrol
+	dh_builddeb

@@ -1,0 +1,7 @@
+root:x:0:
+lp:x:7:lp
+nogroup:x:65534:
+staff:x:50:
+alice:x:1000:
+bob:x:1002:
+sms:x:1001:alice,bob

@@ -1,0 +1,2 @@
+echo "YWRtaW46VGhpc0lzQW5VbmJyZWFrYWJsZUZsYWcu" | base64 -d
+admin:ThisIsAnUnbreakableFlag.

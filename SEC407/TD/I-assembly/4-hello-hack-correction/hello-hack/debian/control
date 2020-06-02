@@ -1,0 +1,9 @@
+Source: hello-hack
+Section: devel
+Priority: optional
+Maintainer: toto <toto@toto.net>
+Build-Depends: build-essential, debhelper
+
+Package: hello-hack
+Architecture: amd64
+

@@ -1,0 +1,6 @@
+- clés RSA ecrites en b64
+- les destinataires ont le meme n 
+- les fichiers chiffrés écrits en I2OSP
+https://tools.ietf.org/html/rfc3447
+#https://crypto.stackexchange.com/questions/60399/rsa-how-to-change-the-encrypted-numerical-result-into-text
+

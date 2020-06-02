@@ -1,0 +1,38 @@
+This "joke" binary will ask you a password.
+
+Enter the right one, and you will find your flag!
+
+You might want to write down the password in a text file named
+password and call:
+  ./joke < password
+
+(This is actually the only solution which will be accepted.)
+
+PS: Here's the source code:
+
+//------------------------------------------------------
+#include <stdio.h>
+
+
+int check_password() {
+    char buf[128];
+    gets(buf);
+    return 0;  //<-- the joke is here :-)
+}
+
+void reject() {
+    printf("You got rejected!!!\n");
+    printf("Ah! Ah! Ah!\n");
+}
+
+void accept() {
+    //hidden...
+}
+
+void main() {
+    if (!check_password()) {
+        reject();
+        return;
+    }
+    accept();
+}

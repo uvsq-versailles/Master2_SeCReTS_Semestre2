@@ -1,0 +1,39 @@
+
+Exercice 1:
+
+    Skills:
+        Reversing: Analyse de code C, Analyse assembleur, Debuggage (x86-cdecl), Patch
+        Cryptographie: Clé symmétrique
+
+Description
+
+Alice et Bob décident d'utiliser leur propre protocole pour s'envoyer des messages. Ils ont tous les deux un mot de passe commun (Pw), une fonction de hachage H pour dériver une clé à partir d'un mot de passe et d'un sel, et une primitive de chiffrement symmétrique E_K.
+
+Lorsque Bob veut envoyer un message (m) à Alice, les deux participants executent ce protocole:
+
+    Alice choisit un sel S aléatoire (16 bytes) et l'envoie à Bob
+    Bob calcule le chiffré E_K(m) avec une clé K=H(Pw,s) dérivée du mot de passe et du sel. Il envoie le chiffré à Alice
+    Alice déchiffre le message.
+
+Alice et Bob implémentent ce protocole et veulent savoir s'il est sûr, donc ils font appel à un expert en sécurité.
+
+Vous disposez d'une version simulée du protocole, écrite en C/C++. Vous avez le code source de certaines fonctions, d'autres sont justes données en boite noire dans un binaire
+
+Questions
+ATTENTION: Vous simulez le protocole du point de vue d'Alice uniquement, vous pouvez donc utiliser un debuggueur, un décompilateur, ou des patchs sur toutes les fonctions SAUF request_encrypted_message. Vous pouvez executer la fonction request_encrypted_message, mais il est interdit de modifier le comportement de cette fonction, ou de lire son contenu!
+
+    Analysez le code source de la fonction de déchiffrement. Quel système a été choisi? en particulier, est-ce un mécanisme standard? un block cipher? un stream cipher? Y'a-t-il des dangers classiques à éviter avec ce genre de systèmes?
+    Executez le simulateur. Quelle est la contrainte supplémentaire sur la forme des message, qui permet au programme de savoir si votre mot de passe est bon ou faux?
+    Avec le debuggueur, comment pouvez-vous afficher la réponse de bob (la longueur du message chiffré et le contenu du chiffré)?
+    Reverse-engineerez (ou debuggez) la fonction qui génère le sel. Quelle est la source d'aléa utilisée?
+    Comment pouvez-vous patcher le binaire pour supprimer l'aléa de sorte que le sel qui est aléatoirement généré par alice soit toujours le même. Vérifiez avec le debuggueur que votre patch a fonctionné
+    Sachant que le simulateur de bob ne peut chiffrer que 3 messages, et qu'un de ces messages est: "Bienvenue dans le CTF du master SeCReTS! May the best team win!", un autre contient le flag. Retrouvez-le flag
+    Le protocole entre alice et bob est-il sûr? Proposer éventuellement des corrections.
+
+Matériel
+
+    Code source partiel du simulateur: proto1.cpp
+    Binaire compilé du simulateur: proto
+    Binaire compilé de la dll contenant la fonction request_encrypted_message libproto3.so
+    Version Kali de la meme chose kali.tar.gz
+

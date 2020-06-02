@@ -1,0 +1,9 @@
+> Quelle commande linux pour transferer tous les paquets/trames via la couche ethernet (bridge)?
+- ip_forward pas necessaire
+- creer un bridge entre les deux interfaces eth0 et eth1 : brctl
+	brctl addbr br0 		# add a bridge ()
+	brctl addif br0 eth0
+	brctl addif br0 eth1	# 
+	ifconfig eth0 0.0.0.0 promisc up # configure le mode promiscuous sur eth0
+	ifconfig eth1 0.0.0.0 promisc up
+	

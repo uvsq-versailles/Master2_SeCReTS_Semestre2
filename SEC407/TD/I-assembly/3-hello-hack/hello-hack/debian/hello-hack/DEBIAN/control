@@ -1,0 +1,7 @@
+Package: hello-hack
+Version: 1.0.0
+Architecture: amd64
+Maintainer: toto <toto@toto.net>
+Installed-Size: 20
+Section: devel
+Priority: optional

@@ -1,0 +1,10 @@
+Comment envoyer un long message à 3 destinataires?
+1. Chiffrer le message avec un cryptosystème symmétrique et une clé de
+session aléatoire
+2. Chiffrer la clé de session avec la clé publique de chaque destinataire.
+résultat: 1 chiffré, trois enveloppes.
+
+Certes... mais as-tu pensé à randomiser le chiffrement des enveloppes?
+
+Euh... non... pourquoi?
+

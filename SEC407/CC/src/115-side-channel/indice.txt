@@ -1,0 +1,18 @@
+the dumbsmartcard program emulates what this pseudocode would do on 
+a very old smartcard where write operations are way slower than 
+read operations.
+
+-------------
+const bit secret[256] = {...}
+int diff=0
+if (secret[0]  !=input[0]  ) increment[diff];
+if (secret[1]  !=input[1]  ) increment[diff];
+if (secret[2]  !=input[2]  ) increment[diff];
+...
+if (secret[254]!=input[254]) increment[diff];
+if (secret[255]!=input[255]) increment[diff];
+if (diff==0)
+    stop OK;
+else
+    stop KO;
+-------------

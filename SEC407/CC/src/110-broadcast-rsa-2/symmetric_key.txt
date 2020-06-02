@@ -1,0 +1,6 @@
+Are we there yet?
+--------------     Almost there!      -----------------
+filename: ciphertext.bin
+cipher: camellia-256-ofb
+key: EAEC5BA147E9C823C64CC9914D13779979D255E5CF615EA89789C564768FCB3A
+iv: 9E20C0E3D433BFF7F37ECC7B74091EF8

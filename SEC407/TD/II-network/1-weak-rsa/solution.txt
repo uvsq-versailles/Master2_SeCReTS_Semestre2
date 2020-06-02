@@ -1,0 +1,84 @@
+# openssl rsa -in private.pem -text 
+> lire le contenu de la cle privee
+
+# openssl rsa -in private.pem -pubout -out public.pem 
+> extraire le contenu de la cle publique a partir de la cle privee
+
+# openssl rsa -pubin -in public.pem -text
+openssl rsa -pubin
+-in superRSAKey.pub.pem -text
+RSA Public-Key: (252 bit)
+Modulus:
+    08:b2:42:36:c7:7e:d5:75:23:65:69:c1:80:de:35:                     
+    df:ad:6b:cf:36:b8:b6:9a:eb:38:82:d1:8b:5f:ad:                     
+    ca:0d
+Exponent: 65537 (0x10001)
+writing RSA key
+-----BEGIN PUBLIC KEY-----
+MDswDQYJKoZIhvcNAQEBBQADKgAwJwIgCLJCNsd+1XUjZWnBgN41361rzza4tprr      
+OILRi1+tyg0CAwEAAQ==
+-----END PUBLIC KEY-----
+
+# openssl rsa -pubin -in superRSAKey.pub.pem -modulus
+Modulus=8B24236C77ED575236569C180DE35DFAD6BCF36B8B69AEB3882D18B5FADCA0D
+writing RSA key
+-----BEGIN PUBLIC KEY-----
+MDswDQYJKoZIhvcNAQEBBQADKgAwJwIgCLJCNsd+1XUjZWnBgN41361rzza4tprr
+OILRi1+tyg0CAwEAAQ==
+-----END PUBLIC KEY-----
+
+# xxd -ps ciphertext.bin 
+056920202
+> convertit bin en hexa
+
+# sage 
+> N=0x080808MODULUS
+> factor(N)
+1246788... * 12029292...
+>p=1246788...
+>q=12029292...
+> p*q-N
+0
+> e=65537
+> phi=(p-1)*(q-1)
+> d=1/e%phi
+> c=0x056920202
+> m=power_mod(c,d,N)
+18910918262
+>hex(m).decode('hex')
+
+Reconstitution d'une clé SSL : 
+d_p=d mod (p-1)
+d_q=d mod (q-1)
+coef_crt=q^-1 mod p
+
+1) manuelle : openssl asn1parse (rubrique genconf)
+d%(p-1) = exp1
+d%(q-1) = exp2
+1/q%p = coeff
+
+> generation du fichier cle.txt
+# openssl asn1parse -genconf cle.txt -out cle.der
+> conversion du der en pem
+# openssl rsa -inform der -in cle.der -out cle.pem
+> cat cle.pem
+# creation de la cle privee
+> openssl rsa -in cle.pem -text
+> openssl rsautl -decrypt -in ciphertext.bin -raw -inkey cle.pem
+
+2) automatique
+sur sagemath : 
+> from Crypto.PublicKey import RSA
+> RSA.construct((long(N),long(e),long(d))).exportKey()
+
+
+
+------------------------------------------------------------------
+
+analyser un certificat
+> openssl x509 -in www.openssl.org.pem -text
+
+ 
+
+
+ 

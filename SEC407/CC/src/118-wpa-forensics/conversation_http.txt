@@ -1,0 +1,109 @@
+GET / HTTP/1.1
+Host: www.flagserver.priv
+User-Agent: Mozilla/5.0 (X11; Ubuntu; Linux i686; rv:26.0) Gecko/20100101 Firefox/26.0
+Accept: text/html,application/xhtml+xml,application/xml;q=0.9,*/*;q=0.8
+Accept-Language: fr,fr-fr;q=0.5
+Accept-Encoding: gzip, deflate
+Connection: keep-alive
+If-Modified-Since: Fri, 29 Aug 2014 15:19:25 GMT
+If-None-Match: "a6-501c62db2ddda-gzip"
+
+HTTP/1.1 401 Unauthorized
+Date: Fri, 29 Aug 2014 16:04:38 GMT
+Server: Apache/2.4.6 (Ubuntu)
+WWW-Authenticate: Basic realm="Authentication Required"
+Content-Length: 465
+Keep-Alive: timeout=5, max=100
+Connection: Keep-Alive
+Content-Type: text/html; charset=iso-8859-1
+
+<!DOCTYPE HTML PUBLIC "-//IETF//DTD HTML 2.0//EN">
+<html><head>
+<title>401 Unauthorized</title>
+</head><body>
+<h1>Unauthorized</h1>
+<p>This server could not verify that you
+are authorized to access the document
+requested.  Either you supplied the wrong
+credentials (e.g., bad password), or your
+browser doesn't understand how to supply
+the credentials required.</p>
+<hr>
+<address>Apache/2.4.6 (Ubuntu) Server at www.flagserver.priv Port 80</address>
+</body></html>
+GET / HTTP/1.1
+Host: www.flagserver.priv
+User-Agent: Mozilla/5.0 (X11; Ubuntu; Linux i686; rv:26.0) Gecko/20100101 Firefox/26.0
+Accept: text/html,application/xhtml+xml,application/xml;q=0.9,*/*;q=0.8
+Accept-Language: fr,fr-fr;q=0.5
+Accept-Encoding: gzip, deflate
+Connection: keep-alive
+If-Modified-Since: Fri, 29 Aug 2014 15:19:25 GMT
+If-None-Match: "a6-501c62db2ddda-gzip"
+Authorization: Basic YWRtaW46VGhpc0lzQW5VbmJyZWFrYWJsZUZsYWcu
+
+HTTP/1.1 200 OK
+Date: Fri, 29 Aug 2014 16:04:40 GMT
+Server: Apache/2.4.6 (Ubuntu)
+Last-Modified: Fri, 29 Aug 2014 15:19:25 GMT
+ETag: "a6-501c62db2ddda-gzip"
+Accept-Ranges: bytes
+Vary: Accept-Encoding
+Content-Encoding: gzip
+Content-Length: 151
+Keep-Alive: timeout=5, max=99
+Connection: Keep-Alive
+Content-Type: text/html
+
+..........5....0..w......u.Y.Ya@B.Gsm*.^.^+..I.L..O...t=...38	.l._.m.@.P;.#.....WE..........|..@...4....L1.eF.s...Q..$. `...}.............Y..|..;d<....GET /favicon.ico HTTP/1.1
+Host: www.flagserver.priv
+User-Agent: Mozilla/5.0 (X11; Ubuntu; Linux i686; rv:26.0) Gecko/20100101 Firefox/26.0
+Accept: image/png,image/*;q=0.8,*/*;q=0.5
+Accept-Language: fr,fr-fr;q=0.5
+Accept-Encoding: gzip, deflate
+Authorization: Basic YWRtaW46VGhpc0lzQW5VbmJyZWFrYWJsZUZsYWcu
+Connection: keep-alive
+
+HTTP/1.1 404 Not Found
+Date: Fri, 29 Aug 2014 16:04:40 GMT
+Server: Apache/2.4.6 (Ubuntu)
+Content-Length: 293
+Keep-Alive: timeout=5, max=98
+Connection: Keep-Alive
+Content-Type: text/html; charset=iso-8859-1
+
+<!DOCTYPE HTML PUBLIC "-//IETF//DTD HTML 2.0//EN">
+<html><head>
+<title>404 Not Found</title>
+</head><body>
+<h1>Not Found</h1>
+<p>The requested URL /favicon.ico was not found on this server.</p>
+<hr>
+<address>Apache/2.4.6 (Ubuntu) Server at www.flagserver.priv Port 80</address>
+</body></html>
+GET /favicon.ico HTTP/1.1
+Host: www.flagserver.priv
+User-Agent: Mozilla/5.0 (X11; Ubuntu; Linux i686; rv:26.0) Gecko/20100101 Firefox/26.0
+Accept: text/html,application/xhtml+xml,application/xml;q=0.9,*/*;q=0.8
+Accept-Language: fr,fr-fr;q=0.5
+Accept-Encoding: gzip, deflate
+Authorization: Basic YWRtaW46VGhpc0lzQW5VbmJyZWFrYWJsZUZsYWcu
+Connection: keep-alive
+
+HTTP/1.1 404 Not Found
+Date: Fri, 29 Aug 2014 16:04:40 GMT
+Server: Apache/2.4.6 (Ubuntu)
+Content-Length: 293
+Keep-Alive: timeout=5, max=97
+Connection: Keep-Alive
+Content-Type: text/html; charset=iso-8859-1
+
+<!DOCTYPE HTML PUBLIC "-//IETF//DTD HTML 2.0//EN">
+<html><head>
+<title>404 Not Found</title>
+</head><body>
+<h1>Not Found</h1>
+<p>The requested URL /favicon.ico was not found on this server.</p>
+<hr>
+<address>Apache/2.4.6 (Ubuntu) Server at www.flagserver.priv Port 80</address>
+</body></html>

@@ -1,0 +1,22 @@
+
+Exercice 2:
+
+    Skills:
+        Reversing: Analyse de code C, Detection de vulnérabilités
+        Système: linux, remote exploit, local root exploit
+
+Description
+
+Sur un serveur, un service de messagerie a été installé. Il permet d'envoyer des messages courts à des utilisateurs du système. Vous disposez du code source (smsd.c) de ce service.
+
+Votre mission est d'identifier des vulnérabilités dans ce service, qui vous permettront d'infiltrer la machine, d'escalader les privilèges, et finalement d'accéder au fichier drapeau /root/flag.
+
+Le serveur utilise cette IP statique:
+ip: 192.168.46.2
+netmask: 255.255.255.254
+matériel:
+
+    Code source du service: smsd.c
+    Contenu de /etc/group: group
+    Machine virtuelle smsd2.vmdk
+

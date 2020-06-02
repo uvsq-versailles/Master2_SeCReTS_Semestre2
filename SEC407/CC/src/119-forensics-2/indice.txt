@@ -1,0 +1,14 @@
+The red flag keeper had a trouble because his flag was too easy to catch
+by the blue team leader.
+
+After a few mails with the customer service of the flag factory, he seems
+happy with his new flag: the red-flag.gif file.
+
+Only problem: it seems that someone (a.k.a YOU) was eavesdropping the last
+conversation...
+
+The flag you seek is the concatenation of the (lowercase hex) sha1sum of
+the red-flag.gif file, and the smtp password of the flagkeeper. 
+
+Good luck!
+
